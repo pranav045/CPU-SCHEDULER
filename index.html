@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CPU Scheduler Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-800 text-gray-100 font-sans p-5">
+    <div class="flex items-center mb-5">
+        <div class="flex items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Github-desktop-logo-symbol.svg/2048px-Github-desktop-logo-symbol.svg.png" class="w-8 h-8">
+            <a href="https://github.com/adityadhimaann/CpuScheduler" class="ml-2 text-blue-500 text-lg no-underline">GitHub</a>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto bg-gray-700 p-5 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold text-center mb-5">Advanced CPU Scheduler Simulator</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Process Input Section -->
+            <div class="bg-gray-600 p-5 rounded-xl">
+                <h2 class="text-xl font-bold mb-4">Add Process</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label for="processId">Process ID:</label>
+                        <input type="text" id="processId" placeholder="P1" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                    </div>
+                    <div>
+                        <label for="arrivalTime">Arrival Time:</label>
+                        <input type="number" id="arrivalTime" min="0" placeholder="0" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                    </div>
+                    <div>
+                        <label for="burstTime">Burst Time:</label>
+                        <input type="number" id="burstTime" min="1" placeholder="5" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
+                    <div>
+                        <label for="priority">Priority (if applicable):</label>
+                        <input type="number" id="priority" min="1" placeholder="1" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                    </div>
+                    <div>
+                        <label for="processColor">Color (optional):</label>
+                        <input type="color" id="processColor" value="#3B82F6" class="w-full p-2 rounded">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4">
+                    <button id="addProcessBtn" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">Add Process</button>
+                    <button id="resetBtn" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded">Reset All</button>
+                    <button id="generateRandomBtn" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">Generate Random Processes</button>
+                </div>
+            </div>
+
+            <!-- Scheduling Configuration -->
+            <div class="bg-gray-600 p-5 rounded-xl">
+                <h2 class="text-xl font-bold mb-4">Scheduling Configuration</h2>
+                <label for="algorithm">Select Scheduling Algorithm:</label>
+                <select id="algorithm" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                    <option value="fcfs">First Come First Serve (FCFS)</option>
+                    <option value="sjf">Shortest Job First (SJF) - Non-preemptive</option>
+                    <option value="srtf">Shortest Remaining Time First (SRTF) - Preemptive</option>
+                    <option value="rr">Round Robin (RR)</option>
+                    <option value="priority">Priority Scheduling - Non-preemptive</option>
+                    <option value="priority_p">Priority Scheduling - Preemptive</option>
+                </select>
+
+                <div id="quantumInput" class="mt-4 hidden">
+                    <label for="timeQuantum">Time Quantum:</label>
+                    <input type="number" id="timeQuantum" min="1" value="2" class="w-full p-2 rounded bg-gray-700 border border-gray-400 text-white">
+                </div>
+
+                <div class="mt-4">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" id="showSteps" class="form-checkbox">
+                        <span class="ml-2">Show execution steps</span>
+                    </label>
+                </div>
+
+                <button id="runSchedulerBtn" class="mt-4 bg-green-500 hover:bg-green-600 text-white p-2 w-full rounded">Run Scheduler</button>
+            </div>
+        </div>
+
+        <!-- Process Table -->
+        <div class="bg-gray-600 p-5 mt-8 rounded-xl">
+            <h2 class="text-xl font-bold mb-4">Process List</h2>
+            <table class="w-full text-center border-collapse">
+                <thead>
+                    <tr class="bg-gray-700">
+                        <th class="p-2 border">PID</th>
+                        <th class="p-2 border">Arrival Time</th>
+                        <th class="p-2 border">Burst Time</th>
+                        <th class="p-2 border">Priority</th>
+                        <th class="p-2 border">Color</th>
+                        <th class="p-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="processTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="bg-gray-600 p-5 mt-8 rounded-xl hidden">
+            <h2 class="text-xl font-bold mb-4">Scheduling Results</h2>
+
+            <div class="bg-gray-700 p-4 rounded mb-4">
+                <h3 class="text-lg font-bold mb-2">Gantt Chart</h3>
+                <div id="ganttChart"></div>
+                <div id="ganttTimeline"></div>
+            </div>
+
+            <div id="executionStepsContainer" class="bg-gray-700 p-4 rounded mb-4 hidden">
+                <h3 class="text-lg font-bold mb-2">Execution Steps</h3>
+                <div id="executionSteps"></div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-2">Process Metrics</h3>
+                <table class="w-full text-center border-collapse">
+                    <thead>
+                        <tr class="bg-gray-700">
+                            <th class="p-2 border">PID</th>
+                            <th class="p-2 border">Arrival Time</th>
+                            <th class="p-2 border">Burst Time</th>
+                            <th class="p-2 border">Completion Time</th>
+                            <th class="p-2 border">Turnaround Time</th>
+                            <th class="p-2 border">Waiting Time</th>
+                            <th class="p-2 border">Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTable"></tbody>
+                </table>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                <div class="bg-gray-700 p-4 rounded">
+                    <h3 class="text-lg font-bold mb-2">Average Metrics</h3>
+                    <div id="averageMetrics"></div>
+                </div>
+                <div class="bg-gray-700 p-4 rounded">
+                    <h3 class="text-lg font-bold mb-2">CPU Utilization</h3>
+                    <div id="cpuUtilization"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
