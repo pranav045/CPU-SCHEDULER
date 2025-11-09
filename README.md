@@ -18,5 +18,3 @@ Detailed metrics for algorithm comparison:
 4.Throughput
 
 Interactive visualization of process execution Custom process creation with configurable parameters Batch simulation for comparative analysis
-
-This is the end.
